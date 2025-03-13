@@ -1,9 +1,10 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { IListItems } from '../../interface/IListItems.interface';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-input-add-item',
-  imports: [],
+  imports: [NgClass],
   templateUrl: './input-add-item.component.html',
   styleUrl: './input-add-item.component.scss'
 })
@@ -12,18 +13,21 @@ export class InputAddItemComponent {
   #cdr = inject(ChangeDetectorRef);
 
   @ViewChild("inputText") public inputText!: ElementRef;
-  @Output () public outputListItems = new EventEmitter<IListItems>();
+
+  @Input({ required: true}) public inputListItems: IListItems[] = []
+
+  @Output () public outputAddListItem = new EventEmitter<IListItems>();
   public focusAndAddItem(value: string) {
     if(value){
       this.#cdr.detectChanges();
       this.inputText.nativeElement.value ='';
 
       //gerando ID
-      const dataAtual = new Date();
-      const timestamp = dataAtual.getTime();
+      const curretDate = new Date();
+      const timestamp = curretDate.getTime();
       const id = `ID ${timestamp}`
 
-      this.outputListItems.emit({
+      this.outputAddListItem.emit({
         id,
         checked: false,
         value
